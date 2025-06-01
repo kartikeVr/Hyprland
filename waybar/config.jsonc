@@ -1,0 +1,182 @@
+// -*- mode: jsonc -*-
+{
+    "position": "top",
+    "height": 30,
+    "spacing": 3,
+
+    "modules-left": [
+    "hyprland/workspaces",
+    "custom/media_controls",
+	
+        
+        
+    ],
+
+    "modules-center": [
+		
+		"hyprland/window"
+        
+    ],
+
+    "modules-right": [
+        "custom/bluetooth",
+        "custom/wifi",
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "temperature",
+        "backlight",
+        "battery",
+        "clock",
+        "tray",
+        "power-profiles-daemon",
+        "custom/power"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+                "1": "१",
+                "2": "२",
+                "3": "३",
+                "4": "४",
+                "5": "५",
+                "6": "६",
+                "7": "७",
+                "8": "८",
+                "9": "९",
+                "10": "१०",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        }
+    },
+
+    "custom/media": {
+        "format": "{icon} {text}",
+        "return-type": "json",
+        "max-length": 40,
+        "format-icons": {
+            "spotify": "",
+            "default": "🎜"
+        },
+        "escape": true,
+        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null"
+    },
+
+    // ------- Custom Bluetooth and Wifi Module -------
+    "custom/bluetooth": {
+    "format": "{}",
+    "return-type": "json",
+    "interval": 10,
+    "exec": "~/.config/waybar/scripts/bluetooth_status.sh",
+    "on-click": "~/.config/waybar/scripts/bluetooth_popup.sh"
+    },
+    "custom/wifi": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 10,
+        "exec": "~/.config/waybar/scripts/wifi_status.sh",
+        "on-click": "~/.config/waybar/scripts/wifi_popup.sh",
+        "tooltip": true
+    },
+    "custom/media_controls": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/media_controls.sh",
+        "interval": 1,
+        // Left click: play/pause
+        "on-click": "playerctl play-pause",
+        // Right click: next
+        "on-click-right": "playerctl next",
+        // Middle click: previous
+        "on-click-middle": "playerctl previous"
+    },
+
+    // ------- Right Side Modules --------
+    "mpd": {
+        "format": "{stateIcon} {artist} - {title} ",
+        "format-disconnected": "Disconnected ",
+        "state-icons": {
+            "paused": "",
+            "playing": ""
+        },
+        "tooltip-format": "{album}\n{elapsedTime:%M:%S}/{totalTime:%M:%S}",
+        "unknown-tag": "N/A",
+        "interval": 5
+    },
+
+
+
+    "tray": {
+        "spacing": 8
+    },
+
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+
+    "cpu": {
+        "format": "{usage}% ",
+        "tooltip": true
+    },
+
+    "memory": {
+        "format": "{}% ",
+        "tooltip": true
+    },
+
+    "temperature": {
+        "critical-threshold": 80,
+        "format": "{temperatureC}°C {icon}",
+        "format-icons": ["", "", ""]
+    },
+
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}% {icon}",
+        "format-full": "{capacity}% {icon}",
+        "format-charging": "{capacity}% ",
+        "format-plugged": "{capacity}% ",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip-format": "Profile: {profile}\nDriver: {driver}",
+        "tooltip": true,
+        "format-icons": {
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
+        }
+    },
+
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    // ------- Power Custom -------
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "wlogout -b 2",
+        "interval": 3600
+    }
+}
+
