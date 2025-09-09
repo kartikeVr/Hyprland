@@ -1,141 +1,116 @@
-// -*- mode: jsonc -*-
 {
     "position": "top",
-    "height": 30,
-    "spacing": 3,
-
+    "height": 40,
+    "spacing": 1,
     "modules-left": [
-    "hyprland/workspaces",
-    "custom/media_controls",
-	
-        
-        
+        "custom/media",
+        "custom/media_prev",
+        "custom/media_toggle",
+        "custom/media_next",
+        "custom/window"
     ],
-
     "modules-center": [
-		
-		"hyprland/window"
-        
+        "hyprland/workspaces"
     ],
-
     "modules-right": [
-        "custom/bluetooth",
         "custom/wifi",
+        "custom/bluetooth",
         "pulseaudio",
-        "cpu",
-        "memory",
-        "temperature",
-        "backlight",
-        "battery",
         "clock",
         "tray",
+        "custom/brightness",
         "power-profiles-daemon",
+        "custom/system",
+        "battery",
         "custom/power"
     ],
-
     "hyprland/workspaces": {
         "format": "{icon}",
         "format-icons": {
-                "1": "१",
-                "2": "२",
-                "3": "३",
-                "4": "४",
-                "5": "५",
-                "6": "६",
-                "7": "७",
-                "8": "८",
-                "9": "९",
-                "10": "१०",
+            "1": "१",
+            "2": "२",
+            "3": "३",
+            "4": "४",
+            "5": "५",
+            "6": "६",
+            "7": "७",
+            "8": "८",
+            "9": "९",
+            "10": "०४",
             "urgent": "",
             "focused": "",
             "default": ""
         }
     },
-
-    "custom/media": {
+    "custom/window":{
+        "exec":"hyprctl activewindow -j | jq -r .title | cut -c1-20",
+  "interval": 1
+},
+"custom/media": {
         "format": "{icon} {text}",
         "return-type": "json",
         "max-length": 40,
         "format-icons": {
             "spotify": "",
-            "default": "🎜"
+            "firefox": "",
+            "mpv": "",
+            "vlc": "󰕼",
+            "default": ""
         },
-        "escape": true,
-        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null"
+        "exec": "$HOME/.config/waybar/mediaplayer.py",
+        "interval": 2,
+        "on-click": "~/.config/waybar/Scripts/focus-media.sh"
     },
-
-    // ------- Custom Bluetooth and Wifi Module -------
-    "custom/bluetooth": {
-    "format": "{}",
-    "return-type": "json",
-    "interval": 10,
-    "exec": "~/.config/waybar/scripts/bluetooth_status.sh",
-    "on-click": "~/.config/waybar/scripts/bluetooth_popup.sh"
+    "custom/media_prev": {
+        "format": "󰒮",
+        "on-click": "playerctl previous",
+        "tooltip": "Previous Track"
     },
-    "custom/wifi": {
-        "format": "{}",
-        "return-type": "json",
-        "interval": 10,
-        "exec": "~/.config/waybar/scripts/wifi_status.sh",
-        "on-click": "~/.config/waybar/scripts/wifi_popup.sh",
-        "tooltip": true
-    },
-    "custom/media_controls": {
-        "format": "{}",
-        "return-type": "json",
-        "exec": "~/.config/waybar/scripts/media_controls.sh",
-        "interval": 1,
-        // Left click: play/pause
+    "custom/media_toggle": {
+        "format": "⏯",
         "on-click": "playerctl play-pause",
-        // Right click: next
-        "on-click-right": "playerctl next",
-        // Middle click: previous
-        "on-click-middle": "playerctl previous"
+        "tooltip": "Play/Pause"
+    },
+    "custom/media_next": {
+        "format": "󰒭",
+        "on-click": "playerctl next",
+        "tooltip": "Next Track"
+    },
+        "custom/wifi": {
+        "format": "󰖩",
+        "tooltip": "Open Network Manager",
+        "on-click": "kitty -e nmtui"
+    },
+        "custom/bluetooth": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "pypr toggle bluetuith"
     },
 
-    // ------- Right Side Modules --------
-    "mpd": {
-        "format": "{stateIcon} {artist} - {title} ",
-        "format-disconnected": "Disconnected ",
-        "state-icons": {
-            "paused": "",
-            "playing": ""
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "default": [
+                "",
+                "",
+                ""
+            ]
         },
-        "tooltip-format": "{album}\n{elapsedTime:%M:%S}/{totalTime:%M:%S}",
-        "unknown-tag": "N/A",
-        "interval": 5
+        "on-click": "pavucontrol"
     },
-
-
-
-    "tray": {
-        "spacing": 8
+    "custom/brightness": {
+        "format": "󰛨",
+        "return-type": "json",
+        "exec": "~/.config/waybar/Scripts/brightness-control.sh",
+        "interval": 2,
+        "on-scroll-up": "~/.config/waybar/Scripts/brightness-control.sh -o i",
+        "on-scroll-down": "~/.config/waybar/Scripts/brightness-control.sh -o d"
     },
-
-    "clock": {
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%Y-%m-%d}"
-    },
-
-    "cpu": {
-        "format": "{usage}% ",
-        "tooltip": true
-    },
-
-    "memory": {
-        "format": "{}% ",
-        "tooltip": true
-    },
-
-    "temperature": {
-        "hwmon-path": "/sys/class/hwmon/hwmon5/temp1_input",
-        "critical-threshold": 80,
-        "format": "{temperatureC}°C {icon}",
-        "format-icons": ["", "", ""]
-    },
-
-
-
     "battery": {
         "states": {
             "warning": 30,
@@ -143,10 +118,21 @@
         },
         "format": "{capacity}% {icon}",
         "format-full": "{capacity}% {icon}",
-        "format-charging": "{capacity}% ",
+        "format-charging": "{capacity}% ",
         "format-plugged": "{capacity}% ",
         "format-alt": "{time} {icon}",
-        "format-icons": ["", "", "", "", ""]
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
+    },
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}",
+        "format":"{:%I:%M %p}"
     },
     "power-profiles-daemon": {
         "format": "{icon}",
@@ -159,21 +145,16 @@
             "power-saver": ""
         }
     },
-
-    "pulseaudio": {
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
-        "format-icons": {
-            "default": ["", "", ""]
-        },
-        "on-click": "pavucontrol"
+        "custom/system": {
+        "exec": "$HOME/.config/waybar/Scripts/system_status.sh",
+        "return-type": "json",
+        "interval": 2,
+        "tooltip": false
     },
 
-    // ------- Power Custom -------
+    "tray": {
+        "spacing": 8
+    },
     "custom/power": {
         "format": "⏻",
         "tooltip": false,
@@ -181,4 +162,3 @@
         "interval": 3600
     }
 }
-
