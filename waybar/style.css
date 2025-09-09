@@ -1,142 +1,165 @@
-@import url("file:///home/kartike/.cache/wal/colors-waybar.css");
+@import "$USER/.cache/wal/colors-waybar.css";
 
-/* General Styles */
 * {
-    font-family: 'JetBrainsMono Nerd Font', Iosevka, "Font Awesome 5 Free", "Font Awesome 5 Brands", "Noto Sans", sans-serif;
-    font-size: 13px;
-    min-height: 0;
-    border: none;
-    box-shadow: none;
-    background: transparent;
+  border: none;
+  font-family: "FiraCode Nerd Font", "Roboto", "sans-serif";
+  font-size: 15px;
+  min-height: 0;
 }
 
-/* Bar Container */
+
 window#waybar {
-    background: rgba(24, 24, 37, 0.70);
-    border-radius: 13px;
-    margin: 4px 7px;
-    padding: 0px;
-    border: 1.2px solid @color1;
-    color: @fg;
+  background-color: transparent;
+  color: @foreground;
+  border-radius: 0;
+  transition: background-color 0.5s ease;
 }
 
-/* Compact pill modules (includes power button) */
-#clock, #battery, #cpu, #memory, #temperature, #backlight, #network,
-#custom-bluetooth, #custom-wifi, #custom-power, #power-profiles-daemon,
-#pulseaudio, #pulseaudio.microphone, #tray {
-    min-height: 20px;
-    background: rgba(24, 24, 37, 0.54);
-    color: @color15;
-    border-radius: 10px;
-    padding-left: 13px;
-    padding-right: 13px;
-    margin: 0 2px;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    /* Extra: for vertical centering in weird modules */
+window#waybar.hidden {
+  opacity: 0.2;
 }
 
-/* Special Power Pill: stronger color, bold icon */
-#custom-power {
-    font-weight: 700;
-    color: @color2; /* or use @color9 / @color11 for a red/orange pop */
-    transition: background 0.15s, color 0.15s;
+/* ---------------- WORKSPACES ---------------- */
+#workspaces {
+  padding: 6px;
+  margin-right: 4px;
+  border-radius: 10px;
+  background-color: alpha(@background, 0.5);
 }
 
-/* -- Consistent Compact Styles for Workspaces -- */
 #workspaces button {
-    min-height: 15px;
-    background: transparent;
-    color: @color6;
-    border-radius: 5px;
-    padding-left: 5px;
-    /* padding-right: 15px; */
-    margin: 0 2px;
-    border: 2px solid transparent;
-    transition: background 0.2s, color 0.2s, border 0.2s;
+  color: @foreground;
+  border-radius: 6px;
+  font-weight: bold;
+  margin: 0 2px;
+  padding: 4px 8px;
+  border-bottom: 2px solid @color5;
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
 }
-#workspaces button.active,
-#workspaces button.focused {
-    color: @color0;
-    background: #ffffff;
-    border: 2px solid @color2;
-}
-#workspaces button.urgent {
-    color: @color0;
-    background: @color1;
-}
+
 #workspaces button:hover {
-    background: @color1;
-    color: @color3;
+  background: @color3;
+  color: @background;
+  border-bottom: 2px solid @color5;
+  border-radius: 8px;
 }
 
-/* Media Controls Pill (Left) */
-#custom-media_controls {
-    min-height: 20px;
-    font-weight: 700;
-    background: transparent;
-    color: @color15;
-    padding-left: 12px;
-    padding-right: 12px;
-    margin: 0 3px;
-    border-radius: 10px;
-    transition: background 0.2s, color 0.2s;
-}
-#custom-media_controls:hover {
-    background: linear-gradient(90deg, @color5 5%, @color2 100%);
-
-
+#workspaces button.focused {
+  background: @color2;
+  color: @background;
+  border-bottom: 2px solid @color5;
 }
 
-/* -- Icon refinement for pulseaudio -- */
-#pulseaudio, #pulseaudio.microphone {
-    font-size: 13px;
-    color: @color6;
-}
-#pulseaudio.muted { color: #f38ba8; }
-#pulseaudio:hover, #pulseaudio.microphone:hover {
-    background: @color1;
-    color: @color5;
+#workspaces button.focused:hover {
+  background: @color4;
+  color: @foreground;
+  border-radius: 8px;
 }
 
-/* -- Color Tweaks for State/Module Accent -- */
-#battery          { color: @color11; }
-#power-profiles-daemon { color: @color8;}
-#clock            { color: @color8; }
-#cpu              { color: @color7; }
-#memory           { color: @color5; }
-#temperature      { color: @color2; }
-#backlight        { color: @color5; }
+#workspaces button.urgent {
+  background-color: @color1;
+}
+
+/* ---------------- MODULES ---------------- */
+#mode {
+  background-color: @color4;
+  border-bottom: 2px solid @color5;
+}
+
+#clock,
+#battery.charging { background-color: @ok; color: @bg; }
+#battery.warning  { background-color: @warn; color: @bg; }
+#battery.critical { background-color: @err; color: @bg; }
+
+#custom-window,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#custom-brightness,
 #network,
-#custom-wifi      { color: @color12; }
-#custom-bluetooth { color: @color4; }
-/* Note: #custom-power is set above for a stronger accent */
-
-/* -- Hover Effects for all bubbles -- */
-#custom-power:hover, #custom-bluetooth:hover, #custom-wifi:hover, #battery:hover, 
-#clock:hover, #cpu:hover, #memory:hover, #temperature:hover, #backlight:hover {
-    background: @color1;
-    color: @color5;
-    box-shadow: 0 0 6px 2px @color0;
-    transition: background 0.17s, color 0.17s;
+#custom-bluetooth,
+#pulseaudio,
+#custom-media,
+#custom-power,
+#tray,
+#mode,
+#idle_inhibitor,
+#mpd,
+#custom-system,
+#clock,
+#power-profiles-daemon,
+#custom-wifi,
+#battery {
+  padding: 7px 20px;
+  margin: 5px 2px;
+  border-radius: 100px;
+  color: @foreground;
+  background-color: alpha(@background, 0.5);
+  transition: all 250ms;
+  box-shadow: alpha(@color2, .2) 0 -25px 18px -14px inset,alpha(@color2, .15) 0 1px 2px,alpha(@color2, .15) 0 2px 4px,alpha(@color2, .15) 0 4px 8px,alpha(@color2, .15) 0 8px 16px,alpha(@color2, .15) 0 16px 32px;
 }
 
-/* Tray icons, state tweaks */
-#tray > .passive { opacity: 0.6; }
-#tray > .needs-attention {
-    background: @color2;
-    color: @color0;
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#temperature:hover,
+#custom-brightness:hover,
+#network:hover,
+#custom-bluetooth:hover,
+#pulseaudio:hover,
+#custom-media:hover,
+#custom-power:hover,
+#tray:hover,
+#mode:hover,
+#idle_inhibitor:hover,
+#mpd:hover,
+#custom-system:hover,
+#battery:hover,
+#clock:hover,
+#power-profiles-daemon:hover,
+#custom-wifi:hover {
+  color: @color4;
+  background-color:@color2;
+  box-shadow: alpha(@color2, .35) 0 -25px 18px -14px inset,alpha(@color2, .25) 0 1px 2px,alpha(@color2, .25) 0 2px 4px,alpha(@color2, .25) 0 4px 8px,alpha(@color2, .25) 0 8px 16px,alpha(@color2, .25) 0 16px 32px;
 }
 
-/* Groups margin */
-.modules-left, .modules-center, .modules-right {
-    margin: 0 3px;
-    margin-top: 1px;
-    margin-bottom: 1px;
+/* ---------------- MEDIA CONTROLS ---------------- */
+#custom-media,
+#custom-media_prev,
+#custom-media_toggle,
+#custom-media_next {
+  padding: 6px 10px;
+  margin: 5px 2px;
+  border-radius: 10px;
+  color: @foreground;
+  background-color: alpha(@background, 0.5);
+  transition: all 0.3s ease;
+  box-shadow:2px 4px 10px rgba(0,0,0,0.4);
 }
 
-/* Hide window titles if none */
-#window.empty {
-    background: none;
-    padding: 0;
+#custom-media_prev:hover,
+#custom-media_toggle:hover,
+#custom-media_next:hover {
+  color: @color4;
 }
+
+/* ---------------- OTHER STATES ---------------- */
+#network.disconnected { color: @color1; }
+#pulseaudio.muted { color: @color1; }
+#temperature.critical { background-color: @color1; }
+
+#tray > .passive { -gtk-icon-effect: dim; color: @foreground; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; color: @foreground; }
+
+#language { color: @foreground; min-width: 16px; }
+
+#keyboard-state {
+  background: @color2;
+  color: @background;
+  min-width: 16px;
+}
+
+#keyboard-state > label { padding: 0 5px; }
+#keyboard-state > label.locked { background: rgba(0, 0, 0, 0.2); }
+
