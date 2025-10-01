@@ -1,4 +1,4 @@
-@import "$USER/.cache/wal/colors-waybar.css";
+@import "/home/stammererone/.cache/wal/colors-waybar.css";
 
 * {
   border: none;
@@ -44,6 +44,12 @@ window#waybar.hidden {
   border-radius: 8px;
 }
 
+#workspaces button.active {
+    background: @color2;
+    color: @background;
+    border-bottom: 2px solid @color5;
+
+}
 #workspaces button.focused {
   background: @color2;
   color: @background;
