@@ -1,4 +1,5 @@
 {
+    "exec-once": "python /home/stammererone/.config/waybar/workspace_visibility.py &",
     "position": "top",
     "height": 40,
     "spacing": 1,
@@ -7,18 +8,17 @@
         "custom/media_prev",
         "custom/media_toggle",
         "custom/media_next",
-        "custom/window"
+        "custom/window",
+        "custom/wifi",
+        "custom/bluetooth"
     ],
     "modules-center": [
         "hyprland/workspaces"
     ],
     "modules-right": [
-        "custom/wifi",
-        "custom/bluetooth",
         "pulseaudio",
         "clock",
         "tray",
-        "custom/brightness",
         "power-profiles-daemon",
         "custom/system",
         "battery",
@@ -40,7 +40,8 @@
             "urgent": "",
             "focused": "",
             "default": ""
-        }
+        },
+        "visible": false
     },
     "custom/window":{
         "exec":"hyprctl activewindow -j | jq -r .title | cut -c1-20",
@@ -77,12 +78,18 @@
         "tooltip": "Next Track"
     },
         "custom/wifi": {
-        "format": "󰖩",
-        "tooltip": "Open Network Manager",
-        "on-click": "kitty -e nmtui"
+        "exec": "~/.config/waybar/Scripts/wifi_status.sh",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": "open network manager",
+        "on-click": "ghostty -e nmtui",
+        "return-type": "json"
     },
         "custom/bluetooth": {
-        "format": "",
+        "exec": "~/.config/waybar/Scripts/bluetooth_device_name.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
         "tooltip": false,
         "on-click": "pypr toggle bluetuith"
     },
@@ -103,14 +110,7 @@
         },
         "on-click": "pavucontrol"
     },
-    "custom/brightness": {
-        "format": "󰛨",
-        "return-type": "json",
-        "exec": "~/.config/waybar/Scripts/brightness-control.sh",
-        "interval": 2,
-        "on-scroll-up": "~/.config/waybar/Scripts/brightness-control.sh -o i",
-        "on-scroll-down": "~/.config/waybar/Scripts/brightness-control.sh -o d"
-    },
+    
     "battery": {
         "states": {
             "warning": 30,
@@ -149,7 +149,8 @@
         "exec": "$HOME/.config/waybar/Scripts/system_status.sh",
         "return-type": "json",
         "interval": 2,
-        "tooltip": false
+        "tooltip": false,
+        "on-click": "ghostty -e btop"
     },
 
     "tray": {
