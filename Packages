@@ -1,4 +1,4 @@
-dln hyprland xdg-desktop-portal xdg-desktop-portal-wlr waybar \
+dln hyprland xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-gtk waybar \
 playerctl brightnessctl iwd rfkill linux-firmware \
 pipewire pipewire-pulse pipewire-alsa pipewire-audio pipewire-jack \
 wireplumber gst-plugin-pipewire pavucontrol \
