@@ -1,4 +1,4 @@
-#!/bin/zsh
+
 
 # ------------------------------------------------------------------------------
 # 🚀 Powerlevel10k Instant Prompt
@@ -36,13 +36,13 @@ export VISUAL="nvim"
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=hyprland
 
-# Python (pyenv) configuration.
+# Python (pyenv) configuration
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -d "$PYENV_ROOT" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv &>/dev/null; then
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
+if [ -d "$PYENV_ROOT" ]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
 
 # --- Starship Prompt (Disabled) ---
@@ -72,9 +72,8 @@ alias dln='download --no-update'
 # ------------------------------------------------------------------------------
 
 ##
-# update-all: Updates official repositories and the AUR, then cleans caches.
+# cleanram: Cleans up package caches.
 ##
-
 cleanram() {
   echo "
 🗑️ The following package files will be deleted, keeping the 3 most recent versions:"
@@ -111,6 +110,9 @@ cleanram() {
   fi
 }
 
+##
+# update-all: Updates official repositories and the AUR, then cleans caches.
+##
 update-all() {
   echo "---  Starting full system upgrade ---"
 
@@ -139,7 +141,7 @@ update-all() {
 # Tries pacman, then yay, then paru unless a specific manager is forced.
 ##
 download() {
-  local package=""
+  local packages=()
   local search_only=false
   local skip_update=false
   local force_manager=""
@@ -151,34 +153,36 @@ download() {
       -n|--no-update) skip_update=true; shift ;;
       -m|--manager)   force_manager="$2"; shift 2 ;;
       -h|--help)
-        echo "Usage: download [options] <package_name>"
+        echo "Usage: download [options] <package_name...>"
         echo "A wrapper to install packages using pacman, yay, or paru."
         echo
         echo "Options:"
-        echo "  -s, --search      Search for a package instead of installing."
+        echo "  -s, --search      Search for packages instead of installing."
         echo "  -n, --no-update   Skip the initial system update check."
         echo "  -m, --manager     Force a specific manager (pacman, yay, paru)."
         echo "  -h, --help        Show this help message."
         return 0
         ;;
       *)
-        package="$1"
+        packages+=("$1")
         shift
         ;;
     esac
   done
 
-  if [[ -z "$package" ]]; then
-    echo "Error: No package name provided. Use -h for help." >&2
+  if [[ ${#packages[@]} -eq 0 ]]; then
+    echo "Error: No package names provided. Use -h for help." >&2
     return 1
   fi
 
   # --- Search Logic ---
   if [[ "$search_only" == true ]]; then
-    echo "--- 🔍 Searching for '$package' ---"
-    command -v pacman &>/dev/null && echo -e "\n--- Official Repositories (pacman) ---" && pacman -Ss "$package"
-    command -v yay &>/dev/null && echo -e "\n--- AUR (yay) ---" && yay -Ss "$package"
-    command -v paru &>/dev/null && echo -e "\n--- AUR (paru) ---" && paru -Ss "$package"
+    for package in "${packages[@]}"; do
+      echo "--- 🔍 Searching for '$package' ---"
+      command -v pacman &>/dev/null && echo -e "\n--- Official Repositories (pacman) ---" && pacman -Ss "$package"
+      command -v yay &>/dev/null && echo -e "\n--- AUR (yay) ---" && yay -Ss "$package"
+      command -v paru &>/dev/null && echo -e "\n--- AUR (paru) ---" && paru -Ss "$package"
+    done
     return 0
   fi
 
@@ -188,44 +192,48 @@ download() {
   fi
 
   # --- Installation Logic ---
-  echo -e "\n--- 📦 Attempting to install '$package' ---"
-  local managers=("pacman" "yay" "paru")
-  local installed=false
+  for package in "${packages[@]}"; do
+    echo -e "\n--- 📦 Attempting to install '$package' ---"
+    local managers=("pacman" "yay" "paru")
+    local installed=false
 
-  for mgr in "${managers[@]}"; do
-    # If a manager is forced, skip all others.
-    if [[ -n "$force_manager" && "$force_manager" != "$mgr" ]]; then
-      continue
-    fi
+    for mgr in "${managers[@]}"; do
+      # If a manager is forced, skip all others.
+      if [[ -n "$force_manager" && "$force_manager" != "$mgr" ]]; then
+        continue
+      fi
 
-    # Check if the manager command exists.
-    if ! command -v "$mgr" &>/dev/null; then
-      continue
-    fi
-    
-    echo "-> Trying with $mgr..."
-    local cmd
-    # Use sudo for pacman, but not for AUR helpers.
-    if [[ "$mgr" == "pacman" ]]; then
-      cmd="sudo pacman -S --noconfirm '$package'"
-    else
-      cmd="$mgr -S --noconfirm '$package'"
-    fi
+      # Check if the manager command exists.
+      if ! command -v "$mgr" &>/dev/null; then
+        continue
+      fi
+      
+      echo "-> Trying with $mgr..."
+      # Use sudo for pacman, but not for AUR helpers.
+      if [[ "$mgr" == "pacman" ]]; then
+        if sudo pacman -S --noconfirm "$package"; then
+          installed=true
+        fi
+      else
+        if "$mgr" -S --noconfirm "$package"; then
+          installed=true
+        fi
+      fi
 
-    # Execute the command. If successful, mark as installed and stop.
-    if eval "$cmd"; then
-      installed=true
-      echo -e "\n✅ Successfully installed '$package' with $mgr!"
-      break
+      # If successful, mark as installed and stop.
+      if [[ "$installed" == true ]]; then
+        echo -e "\n✅ Successfully installed '$package' with $mgr!"
+        break
+      fi
+    done
+
+    # --- Final Status ---
+    if [[ "$installed" == false ]]; then
+      echo -e "\n❌ Failed to install '$package' with all available managers."
+      echo "💡 Tip: Try searching first with 'dls $package' to find the correct name."
+      return 1
     fi
   done
-
-  # --- Final Status ---
-  if [[ "$installed" == false ]]; then
-    echo -e "\n❌ Failed to install '$package' with all available managers."
-    echo "💡 Tip: Try searching first with 'dls $package' to find the correct name."
-    return 1
-  fi
 }
 # Add this function to your .zshrc file
 remove() {
@@ -240,10 +248,9 @@ remove() {
         echo "Attempting to remove package: $package"
         
         # Check if the package is installed
-        if pacman -Q "$package" > /dev/null 2>&1; then
+        if pacman -Q "$package" &>/dev/null; then
             # Remove the package
-            sudo pacman -Rns "$package" --noconfirm
-            if [ $? -eq 0 ]; then
+            if sudo pacman -Rns "$package" --noconfirm; then
                 echo "Successfully removed: $package"
             else
                 echo "Failed to remove: $package"
@@ -252,7 +259,6 @@ remove() {
             echo "Package '$package' is not installed or does not exist."
         fi
     done
-    # Check if a package name is provided
 }
 
 # ------------------------------------------------------------------------------
