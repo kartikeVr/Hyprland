@@ -5,4 +5,5 @@ wireplumber gst-plugin-pipewire pavucontrol \
 bluez bluez-utils blueman \
 alsa-firmware alsa-ucm-conf sof-firmware \
 python python-pip python-psutil \
- xdg-desktop-portal-hyprland cloudflare-warp-bin
+ xdg-desktop-portal-hyprland cloudflare-warp-bin \
+archlinux-xdg-menu
