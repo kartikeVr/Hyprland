@@ -1,127 +1,172 @@
-@import url("file:///home/stammererone/.cache/wal/colors-waybar.css");
+[
+  {
+    "layer": "top",
+    "position": "top",
+    "height": 50,
+    "name": "top-bar",
+    "spacing": 1,
 
-/* ===========================
-   Waybar Neumorphism (GTK compatible, pywal-only)
-   =========================== */
+    "modules-left": [
+      "custom/media",
+      "custom/updates",
+      "tray",
+      "custom/background-apps",
+      "custom/network",
+      "custom/bluetooth"
+    ],
 
-* {
-  font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 13px;
-  color: @foreground;
-}
+    "modules-center": [
+      "hyprland/workspaces"
+    ],
 
-/* main bar */
-window#waybar {
-  background: transparent;
-  margin: 8px;
-  padding: 8px 12px;
-}
+    "modules-right": [
 
-/* neumorphic block template */
-#workspaces button,
-#custom-clock,
-#cpu,
-#memory,
-#temperature,
-#custom-updates,
-#custom-network,
-#custom-bluetooth,
-#custom-media,
-#pulseaudio,
-#backlight,
-#custom-brightness,
-#custom-kdeconnect,
-#tray,
-#battery,
-#custom-power,
-#custom-background-apps,
-#custom-sys-stats,
-#custom-predator,
-#custom-cliphist,
-#power-profiles-daemon {           /* ← Added power profiles module */
-  background: @background;
-  padding: 4px 14px;
-  margin: 6px 2px;
-  border-radius: 12px;
+      "pulseaudio",
+      "battery",
+      "custom/cliphist",
+      "custom/clock",
+      "power-profiles-daemon",
+      "custom/sys-stats",
+      "custom/power"
+    ],
+     "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "१",
+            "2": "२",
+            "3": "३",
+            "4": "४",
+            "5": "५",
+            "6": "६",
+            "7": "७",
+            "8": "८",
+            "9": "९",
+            "10": "०४",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        },
+        "visible": false
+    },
 
-  /* soft gtk shadow (outer) */
-  box-shadow:
-    2px 2px 4px rgba(0,0,0,0.35),
-    -2px -2px 4px rgba(255,255,255,0.04);
-}
+    "custom/cliphist": {
+      "format": "{}",
+      "tooltip": true,
+      "tooltip-format": "Clipboard History",
+      "exec": "echo ' '",
+      "on-click": "~/.config/waybar/scripts/clip-select.sh",
+      "on-click-middle": "cliphist wipe",
+      "on-click-right": "~/.config/waybar/scripts/clip-delete.sh"
+    },
 
-/* workspace specific */
-#workspaces button {
-  padding: 6px 12px;
-  border-radius: 12px;
-}
-tooltip{
-  background:@background;
-  border: 1px solid rgba(100,114,125,0.5);
-  font-family: "JetBrainMono Nerd Font", monospace;
-}
+    "custom/media": {
+      "exec": "~/.config/waybar/scripts/media_info.py",
+      "return-type": "json",
+      "on-click": "playerctl play-pause",
+      "on-scroll-up": "playerctl next",
+      "on-scroll-down": "playerctl previous",
+      "tooltip": false,
+      "interval": 2
+    },
 
-tooltip label {
-  color:aquamarine;
-}
+    "tray": {
+      "icon-size": 16,
+      "spacing": 8,
+      "show-passive-items": true,
+      "reverse-direction": true
+    },
 
-/* focused workspace */
-#workspaces button.focused {
-  background: @color8;
-  border-radius: 12px;
-  color: @foreground;
 
-  box-shadow:
-    1px 1px 2px rgba(0,0,0,0.30),
-    -1px -1px 2px rgba(255,255,255,0.04);
-}
 
-/* accent mapping using only pywal colors */
-#custom-network       { color: @color4; }
-#custom-bluetooth     { color: @color5; }
-#cpu                  { color: @color1; }
-#memory               { color: @color3; }
-#temperature          { color: @color2; }
-#pulseaudio           { color: @color6; }
-#backlight            { color: @color13; }
-#custom-brightness    { color: @color11; }
-#custom-media         { color: @color6; }
-#custom-clock         { color: @color11; }
-#custom-updates       { color: @color9; }
-#custom-power         { color: @color8; }
-#battery              { color: @color10; }
-#custom-predator      { color: @color7; }
+    "custom/background-apps": {
+      "exec": "~/.config/waybar/scripts/background_apps.py",
+      "return-type": "json",
+      "on-click": "/home/stammererone/.config/waybar/scripts/background_apps.py --popup",
+      "interval": 5
+    },
 
-/* ---- Power Profiles Accent Colors ---- */
-#power-profiles-daemon {
-  color: @color12;
-}
+    "custom/sys-stats": {
+      "exec": "~/.config/waybar/scripts/sys_stat.py",
+      "return-type": "json",
+      "on-click": "/home/stammererone/.config/waybar/scripts/sys_stat.py --popup",
+      "interval": 2
+    },
 
-/* State styles from power-profiles-daemon */
-#power-profiles-daemon.performance {
-  color: @color1;          /* Red accent for performance */
-}
+    "custom/updates": {
+      "exec": "~/.config/waybar/scripts/system-update.sh",
+      "return-type": "json",
+      "on-click": "kitty --hold ~/.config/waybar/sys_update.sh update",
+      "interval": 1800
+    },
 
-#power-profiles-daemon.balanced {
-  color: @color4;          /* Blue/Green for balanced */
-}
+    "custom/brightness": {
+      "exec": "~/.config/waybar/scripts/brightnesscontrol.sh",
+      "return-type": "json",
+      "on-scroll-up": "~/.config/waybar/scripts/brightnesscontrol.sh -o i",
+      "on-scroll-down": "~/.config/waybar/scripts/brightnesscontrol.sh -o d",
+      "interval": 1
+    },
 
-#power-profiles-daemon.power-saver {
-  color: @color10;         /* Green accent for power saver */
-}
+    "custom/network": {
+      "exec": "~/.config/waybar/scripts/wifi.py --mode network",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/wifi.py --popup network",
+      "interval": 5
+    },
 
-/* KDE Connect states */
-#custom-kdeconnect.disconnected { color: @color0; }
-#custom-kdeconnect.connected { color: @foreground; }
-#custom-kdeconnect.notifications { color: @color11; }
-#custom-kdeconnect.media-playing { color: @color6; }
+    "custom/bluetooth": {
+      "exec": "~/.config/waybar/scripts/wifi.py --mode bluetooth",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/wifi.py --popup bluetooth",
+      "interval": 5
+    },
 
-/* system stats severity */
-#custom-sys-stats.warning { color: @color9; }
-#custom-sys-stats.critical { color: @color1; }
+    "custom/clock": {
+      "exec": "~/.config/waybar/scripts/calendar_time.py",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/calendar_time.py --toggle",
+      "interval": 1
+    },
+    "power-profiles-daemon": {
+            "format": "{icon}",
+            "tooltip-format": "Profile: {profile}\nDriver: {driver}",
+            "tooltip": true,
+            "format-icons": {
+                "default": "",
+                "performance": "",
+                "balanced": "󰗑",
+                "power-saver": ""
+            }
+        },
 
-/* cliphist */
-#custom-cliphist {
-  color: @color10;
-  background: @background;
-}
+    "battery": {
+      "format": "{icon} {capacity}%",
+      "format-charging": " {capacity}%",
+      "format-plugged": " {capacity}%",
+      "format-icons": ["", "", "", "", ""]
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "default": [
+                "",
+                "",
+                ""
+            ]
+        },
+        "on-click": "pavucontrol"
+    },
+
+
+    "custom/power": {
+      "format": "",
+      "on-click": "wlogout -b 2",
+      "tooltip": false
+    }
+  }
+]
