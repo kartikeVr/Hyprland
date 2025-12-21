@@ -1,171 +1,127 @@
-@import "/home/stammererone/.cache/wal/colors-waybar.css";
+@import url("file:///home/stammererone/.cache/wal/colors-waybar.css");
+
+/* ===========================
+   Waybar Neumorphism (GTK compatible, pywal-only)
+   =========================== */
 
 * {
-  border: none;
-  font-family: "FiraCode Nerd Font", "Roboto", "sans-serif";
-  font-size: 15px;
-  min-height: 0;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  color: @foreground;
 }
 
-
+/* main bar */
 window#waybar {
-  background-color: transparent;
-  color: @foreground;
-  border-radius: 0;
-  transition: background-color 0.5s ease;
+  background: transparent;
+  margin: 8px;
+  padding: 8px 12px;
 }
 
-window#waybar.hidden {
-  opacity: 0.2;
-}
-
-/* ---------------- WORKSPACES ---------------- */
-#workspaces {
-  padding: 6px;
-  margin-right: 4px;
-  border-radius: 10px;
-  background-color: alpha(@background, 0.5);
-}
-
-#workspaces button {
-  color: @foreground;
-  border-radius: 6px;
-  font-weight: bold;
-  margin: 0 2px;
-  padding: 4px 8px;
-  border-bottom: 2px solid @color5;
-  transition: background-color 0.3s ease, border-radius 0.3s ease;
-}
-
-#workspaces button:hover {
-  background: @color3;
-  color: @background;
-  border-bottom: 2px solid @color5;
-  border-radius: 8px;
-}
-
-#workspaces button.active {
-    background: @color2;
-    color: @background;
-    border-bottom: 2px solid @color5;
-
-}
-#workspaces button.focused {
-  background: @color2;
-  color: @background;
-  border-bottom: 2px solid @color5;
-}
-
-#workspaces button.focused:hover {
-  background: @color4;
-  color: @foreground;
-  border-radius: 8px;
-}
-
-#workspaces button.urgent {
-  background-color: @color1;
-}
-
-/* ---------------- MODULES ---------------- */
-#mode {
-  background-color: @color4;
-  border-bottom: 2px solid @color5;
-}
-
-#clock,
-#battery.charging { background-color: @ok; color: @bg; }
-#battery.warning  { background-color: @warn; color: @bg; }
-#battery.critical { background-color: @err; color: @bg; }
-
-#custom-window,
+/* neumorphic block template */
+#workspaces button,
+#custom-clock,
 #cpu,
 #memory,
-#disk,
 #temperature,
-#custom-brightness,
-#network,
+#custom-updates,
+#custom-network,
 #custom-bluetooth,
+#custom-media,
 #pulseaudio,
-#custom-media,
-#custom-power,
+#backlight,
+#custom-brightness,
+#custom-kdeconnect,
 #tray,
-#mode,
-#idle_inhibitor,
-#mpd,
-#custom-system,
-#clock,
-#power-profiles-daemon,
-#custom-wifi,
-#battery {
-  padding: 7px 20px;
-  margin: 5px 2px;
-  border-radius: 100px;
+#battery,
+#custom-power,
+#custom-background-apps,
+#custom-sys-stats,
+#custom-predator,
+#custom-cliphist,
+#power-profiles-daemon {           /* ← Added power profiles module */
+  background: @background;
+  padding: 4px 14px;
+  margin: 6px 2px;
+  border-radius: 12px;
+
+  /* soft gtk shadow (outer) */
+  box-shadow:
+    2px 2px 4px rgba(0,0,0,0.35),
+    -2px -2px 4px rgba(255,255,255,0.04);
+}
+
+/* workspace specific */
+#workspaces button {
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+tooltip{
+  background:@background;
+  border: 1px solid rgba(100,114,125,0.5);
+  font-family: "JetBrainMono Nerd Font", monospace;
+}
+
+tooltip label {
+  color:aquamarine;
+}
+
+/* focused workspace */
+#workspaces button.focused {
+  background: @color8;
+  border-radius: 12px;
   color: @foreground;
-  background-color: alpha(@background, 0.5);
-  transition: all 250ms;
-  box-shadow: alpha(@color2, .2) 0 -25px 18px -14px inset,alpha(@color2, .15) 0 1px 2px,alpha(@color2, .15) 0 2px 4px,alpha(@color2, .15) 0 4px 8px,alpha(@color2, .15) 0 8px 16px,alpha(@color2, .15) 0 16px 32px;
+
+  box-shadow:
+    1px 1px 2px rgba(0,0,0,0.30),
+    -1px -1px 2px rgba(255,255,255,0.04);
 }
 
-#cpu:hover,
-#memory:hover,
-#disk:hover,
-#temperature:hover,
-#custom-brightness:hover,
-#network:hover,
-#custom-bluetooth:hover,
-#pulseaudio:hover,
-#custom-media:hover,
-#custom-power:hover,
-#tray:hover,
-#mode:hover,
-#idle_inhibitor:hover,
-#mpd:hover,
-#custom-system:hover,
-#battery:hover,
-#clock:hover,
-#power-profiles-daemon:hover,
-#custom-wifi:hover {
-  color: @color4;
-  background-color:@color2;
-  box-shadow: alpha(@color2, .35) 0 -25px 18px -14px inset,alpha(@color2, .25) 0 1px 2px,alpha(@color2, .25) 0 2px 4px,alpha(@color2, .25) 0 4px 8px,alpha(@color2, .25) 0 8px 16px,alpha(@color2, .25) 0 16px 32px;
+/* accent mapping using only pywal colors */
+#custom-network       { color: @color4; }
+#custom-bluetooth     { color: @color5; }
+#cpu                  { color: @color1; }
+#memory               { color: @color3; }
+#temperature          { color: @color2; }
+#pulseaudio           { color: @color6; }
+#backlight            { color: @color13; }
+#custom-brightness    { color: @color11; }
+#custom-media         { color: @color6; }
+#custom-clock         { color: @color11; }
+#custom-updates       { color: @color9; }
+#custom-power         { color: @color8; }
+#battery              { color: @color10; }
+#custom-predator      { color: @color7; }
+
+/* ---- Power Profiles Accent Colors ---- */
+#power-profiles-daemon {
+  color: @color12;
 }
 
-/* ---------------- MEDIA CONTROLS ---------------- */
-#custom-media,
-#custom-media_prev,
-#custom-media_toggle,
-#custom-media_next {
-  padding: 6px 10px;
-  margin: 5px 2px;
-  border-radius: 10px;
-  color: @foreground;
-  background-color: alpha(@background, 0.5);
-  transition: all 0.3s ease;
-  box-shadow:2px 4px 10px rgba(0,0,0,0.4);
+/* State styles from power-profiles-daemon */
+#power-profiles-daemon.performance {
+  color: @color1;          /* Red accent for performance */
 }
 
-#custom-media_prev:hover,
-#custom-media_toggle:hover,
-#custom-media_next:hover {
-  color: @color4;
+#power-profiles-daemon.balanced {
+  color: @color4;          /* Blue/Green for balanced */
 }
 
-/* ---------------- OTHER STATES ---------------- */
-#network.disconnected { color: @color1; }
-#pulseaudio.muted { color: @color1; }
-#temperature.critical { background-color: @color1; }
-
-#tray > .passive { -gtk-icon-effect: dim; color: @foreground; }
-#tray > .needs-attention { -gtk-icon-effect: highlight; color: @foreground; }
-
-#language { color: @foreground; min-width: 16px; }
-
-#keyboard-state {
-  background: @color2;
-  color: @background;
-  min-width: 16px;
+#power-profiles-daemon.power-saver {
+  color: @color10;         /* Green accent for power saver */
 }
 
-#keyboard-state > label { padding: 0 5px; }
-#keyboard-state > label.locked { background: rgba(0, 0, 0, 0.2); }
+/* KDE Connect states */
+#custom-kdeconnect.disconnected { color: @color0; }
+#custom-kdeconnect.connected { color: @foreground; }
+#custom-kdeconnect.notifications { color: @color11; }
+#custom-kdeconnect.media-playing { color: @color6; }
 
+/* system stats severity */
+#custom-sys-stats.warning { color: @color9; }
+#custom-sys-stats.critical { color: @color1; }
+
+/* cliphist */
+#custom-cliphist {
+  color: @color10;
+  background: @background;
+}
