@@ -1,0 +1,210 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 49,
+    "name": "top-bar",
+    "spacing": 1,
+
+    "modules-left": [
+      "custom/media",
+      "custom/updates",
+      "group/expandable-taskbar",
+      "tray",
+      "custom/background-apps",
+      "custom/network",
+      "custom/bluetooth"
+    ],
+
+    "modules-center": [
+      "hyprland/workspaces"
+    ],
+
+    "modules-right": [
+      "custom/capslock",
+      "custom/volume-progress",
+      "battery",
+      "custom/cliphist",
+      "custom/clock",
+      "power-profiles-daemon",
+      "custom/sys-stats",
+      "custom/power"
+    ],
+
+    /* --- NEW GROUP: EXPANDABLE TASKBAR --- */
+    "group/expandable-taskbar": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "child-icon",
+            "transition-left-to-right": true
+        },
+        "modules": [
+            "custom/apps",
+            "wlr/taskbar"
+        ]
+    },
+
+    /* --- NEW MODULE: WINDOW ICONS --- */
+    "wlr/taskbar": {
+        "format": "{icon}",
+	"all-output": true,
+        "icon-size": 20,
+        "tooltip": true,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": [
+           "Waybar"
+        ],
+        "app_ids-mapping": {
+            "firefox-developeredition": "firefox-developer-edition"
+        }
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "१",
+            "2": "२",
+            "3": "३",
+            "4": "४",
+            "5": "५",
+            "6": "६",
+            "7": "७",
+            "8": "८",
+            "9": "९",
+            "10": "०४",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        }
+    },
+
+    "custom/cliphist": {
+      "format": "{}",
+      "tooltip": true,
+      "tooltip-format": "Clipboard History",
+      "exec": "echo ' '",
+      "on-click": "cliphist list | walker --dmenu | cliphist decode | wl-copy",
+      "on-click-middle": "cliphist wipe",
+      //"on-click-right": "~/.config/waybar/scripts/clip-delete.sh"
+    },
+
+    "custom/media": {
+      "exec": "~/.config/waybar/scripts/media_info.py",
+      "return-type": "json",
+      "on-click": "playerctl play-pause",
+      "on-scroll-up": "playerctl next",
+      "on-scroll-down": "playerctl previous",
+      "tooltip": false,
+      "interval": 2
+    },
+
+    "custom/apps": {
+      "exec": "~/.config/waybar/scripts/apps.py",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/apps.py --popup",
+      "interval": 2
+    },
+
+    "tray": {
+      "icon-size": 16,
+      "spacing": 8,
+      "show-passive-items": true,
+      "reverse-direction": true
+    },
+
+    "custom/windows": {
+      "exec": "~/.config/waybar/scripts/windows.py",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/windows.py --popup",
+      "interval": 2
+    },
+
+    "custom/background-apps": {
+      "exec": "~/.config/waybar/scripts/background_apps.py",
+      "return-type": "json",
+      "on-click": "/home/stammererone/.config/waybar/scripts/background_apps.py --popup",
+      "interval": 5
+    },
+
+    "custom/sys-stats": {
+      "exec": "~/.config/waybar/scripts/sys_stat.py",
+      "return-type": "json",
+      "on-click": "/home/stammererone/.config/waybar/scripts/sys_stat.py --popup",
+      "interval": 2
+    },
+
+    "custom/updates": {
+      "exec": "~/.config/waybar/scripts/system-update.sh",
+      "return-type": "json",
+      "on-click": "kitty --hold ~/.config/waybar/sys_update.sh update",
+      "interval": 1800
+    },
+
+    "custom/brightness": {
+      "exec": "~/.config/waybar/scripts/brightnesscontrol.sh",
+      "return-type": "json",
+      "on-scroll-up": "~/.config/waybar/scripts/brightnesscontrol.sh -o i",
+      "on-scroll-down": "~/.config/waybar/scripts/brightnesscontrol.sh -o d",
+      "interval": 1
+    },
+
+    "custom/network": {
+      "exec": "~/.config/waybar/scripts/wifi.py --mode network",
+      "return-type": "json",
+      "on-click": "networkmanager_dmenu",
+      "interval": 5
+    },
+
+    "custom/bluetooth": {
+      "exec": "~/.config/waybar/scripts/wifi.py --mode bluetooth",
+      "return-type": "json",
+      "on-click": "networkmanager_dmenu",
+      "interval": 5
+    },
+
+    "custom/clock": {
+      "exec": "~/.config/waybar/scripts/calendar_time.py",
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/calendar_time.py --toggle",
+      "interval": 1
+    },
+
+    "power-profiles-daemon": {
+            "format": "{icon}",
+            "tooltip-format": "Profile: {profile}\nDriver: {driver}",
+            "tooltip": true,
+            "format-icons": {
+                "default": "",
+                "performance": "",
+                "balanced": "󰗑",
+                "power-saver": ""
+            }
+        },
+
+    "battery": {
+      "format": "{icon} {capacity}%",
+      "format-charging": " {capacity}%",
+      "format-plugged": " {capacity}%",
+      "format-icons": ["", "", "", "", ""]
+    },
+
+    "custom/volume-progress": {
+      "exec": "/home/stammererone/.config/waybar/scripts/volume_manager.py --listen",
+      "return-type": "json",
+      "tooltip": false
+    },
+
+    "custom/capslock": {
+      "exec": "/home/stammererone/.config/waybar/scripts/capslock.py",
+      "return-type": "json",
+      "persistent": true
+    },
+
+    "custom/power": {
+      "format": "",
+      "on-click": "wlogout -b 2",
+      "tooltip": false
+    }
+}

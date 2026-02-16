@@ -1,0 +1,24 @@
+# ~/.config/elephant/config.toml
+
+# General settings
+[general]
+# optimizing for speed
+debounce = 50 
+
+# Define the Applications Plugin
+[plugins]
+  [plugins.bluetooth]
+   enable = true
+   binary = "elephant-bluetooth" # Ensure you have elephant-bluetooth-bin installed
+   icon = "bluetooth"
+  [plugins.applications]
+    enable = true
+    # This binary name must match the package you installed (elephant-desktopapplications-bin)
+    binary = "elephant-desktopapplications"
+    weight = 5
+    
+    # Optional: Configure how apps are displayed
+    [plugins.applications.config]
+      show_generic = true
+      show_sub = true
+      only_visible = true

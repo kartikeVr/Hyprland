@@ -1,0 +1,208 @@
+@import url("/home/stammererone/.cache/wal/colors-waybar.css");
+
+/* ==============================================================================
+   --- CONFIGURATION ZONE ---
+   ============================================================================== */
+@define-color bar-bg        rgba(0, 0, 0, 0);
+@define-color module-bg     @color2;
+@define-color module-text   @color7;
+@define-color border-color  @color4;
+
+/* Global Reset */
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+    font-weight: bold;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+window#waybar {
+    background: @bar-bg;
+    margin-top: 10px;
+    margin-left: 10px; 
+    margin-right: 10px;
+}
+
+/* ==============================================================================
+   1. THE 3D MODULES (Targeted Specifically)
+   ============================================================================== */
+#custom-media,
+#custom-updates,
+#custom-background-apps,
+#custom-network,
+#custom-bluetooth,
+#custom-capslock,
+#custom-volume-progress,
+#battery,
+#custom-apps,
+#custom-cliphist,
+#custom-clock,
+#clock,
+#power-profiles-daemon,
+#custom-sys-stats,
+#custom-power,
+#taskbar {  /* ADDED: taskbar joins the 3D club */
+    background-color: @module-bg;
+    color: @module-text;
+    border: 1px solid @border-color;
+    border-radius: 12px;
+
+    /* --- PADDING --- */
+    padding-top: 4px;     
+    padding-bottom: 4px;
+    padding-left: 12px;   
+    padding-right: 12px;  
+
+    /* --- NORMAL STATE MARGINS --- */
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-left: 5px;
+    margin-right: 5px;
+
+    /* --- 3D SHADOW (Bottom-Right) --- */
+    box-shadow: 4px 4px 0px @border-color;
+    
+    /* We animate margin and box-shadow instead of transform */
+    transition: margin 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* --- HOVER STATE (Lift Up) --- */
+#custom-media:hover, #custom-updates:hover, #custom-background-apps:hover,
+#custom-network:hover, #custom-bluetooth:hover, #custom-capslock:hover,
+#custom-volume-progress:hover, #battery:hover, #custom-cliphist:hover,
+#clock:hover, #power-profiles-daemon:hover, #custom-sys-stats:hover,#custom-apps:hover,
+#custom-power:hover, #taskbar:hover {
+    background-color: @color5;
+    color: @background;
+    
+    /* MOVEMENT: Move UP by reducing top margin */
+    margin-top: 4px;
+    margin-bottom: 8px; /* Add to bottom to keep layout stable */
+    
+    /* Shadow gets bigger */
+    box-shadow: 6px 6px 0px @border-color;
+}
+
+/* --- CLICK STATE (Press Down) --- */
+#custom-media:active, #custom-updates:active, #custom-background-apps:active,
+#custom-network:active, #custom-bluetooth:active, #custom-capslock:active,
+#custom-volume-progress:active, #battery:active, #custom-cliphist:active,
+#clock:active, #power-profiles-daemon:active,#custom-apps:active, #custom-sys-stats:active,
+#custom-power:active, #taskbar:active {
+    background-color: @color8;
+    color: @background;
+    
+    /* MOVEMENT: Move DOWN by increasing top margin */
+    margin-top: 10px;
+    margin-bottom: 2px; /* Reduce bottom margin */
+    
+    /* Shadow disappears (Pressed flat) */
+    box-shadow: 0px 0px 0px @border-color;
+}
+
+/* ==============================================================================
+   2. WORKSPACES (The Center Pill)
+   ============================================================================== */
+#workspaces {
+    background-color: @module-bg;
+    border: 1px solid @border-color;
+    border-radius: 12px;
+    
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 0px 5px;
+    
+    box-shadow: 4px 4px 0px @border-color;
+}
+
+#workspaces button {
+    padding: 4px 8px; 
+    color: @module-text;
+    background: transparent;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    box-shadow: none; 
+}
+
+#workspaces button.active {
+    color: @color1; 
+    background-color: @background; 
+    padding: 4px 12px;
+    box-shadow: inset 0px 2px 2px rgba(0,0,0,0.3);
+}
+
+#workspaces button:hover {
+    background-color: @border-color;
+    color: @background;
+}
+
+/* ==============================================================================
+   3. TRAY
+   ============================================================================== */
+#tray {
+    background-color: @module-bg;
+    border: 1px solid @border-color;
+    border-radius: 12px;
+    margin: 6px 5px;
+    padding: 4px 10px;
+    box-shadow: 4px 4px 0px @border-color;
+}
+
+/* ==============================================================================
+   4. EXTRAS
+   ============================================================================== */
+#custom-power { 
+    color: @color1; 
+    padding-right: 14px; 
+}
+
+#battery.warning { color: @color3; }
+#battery.critical { color: @color1; animation: blink 1s linear infinite; }
+
+/* --- NEW: VOLUME OVERDRIVE (>100%) --- */
+#custom-volume-progress.overdrive {
+    color: @background;           /* Text becomes dark */
+    background-color: @color1;    /* Background becomes RED */
+    border-color: @color1;        /* Border becomes RED */
+    
+    /* Optional: Make it blink to show it's unsafe levels */
+    animation: blink 1s linear infinite;
+}
+
+/* Ensure the blink animation exists */
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
+
+tooltip {
+    background: @background;
+    border: 2px solid @border-color;
+    border-radius: 10px;
+}
+tooltip label { color: @foreground; }
+
+/* ==============================================================================
+   5. EXPANDABLE TASKBAR ICONS
+   ============================================================================== */
+#taskbar button {
+    padding: 0px 5px;
+    margin: 0px 2px;
+    border-radius: 6px;
+    color: @module-text;
+    background: transparent;
+    box-shadow: none; /* No 3D shadow for inner icons */
+}
+
+#taskbar button:hover {
+    background-color: @color5;
+    color: @background;
+}
+
+#taskbar button.active {
+    background-color: @color8;
+    color: @background;
+}
