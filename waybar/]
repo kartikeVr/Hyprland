@@ -8,7 +8,6 @@
     "modules-left": [
       "custom/media",
       "custom/updates",
-      "group/expandable-taskbar",
       "tray",
       "custom/background-apps",
       "custom/network",
@@ -20,6 +19,7 @@
     ],
 
     "modules-right": [
+     
       "custom/capslock",
       "custom/volume-progress",
       "battery",
@@ -29,39 +29,7 @@
       "custom/sys-stats",
       "custom/power"
     ],
-
-    /* --- NEW GROUP: EXPANDABLE TASKBAR --- */
-    "group/expandable-taskbar": {
-        "orientation": "horizontal",
-        "drawer": {
-            "transition-duration": 500,
-            "children-class": "child-icon",
-            "transition-left-to-right": true
-        },
-        "modules": [
-            "custom/apps",
-            "wlr/taskbar"
-        ]
-    },
-
-    /* --- NEW MODULE: WINDOW ICONS --- */
-    "wlr/taskbar": {
-        "format": "{icon}",
-	"all-output": true,
-        "icon-size": 20,
-        "tooltip": true,
-        "tooltip-format": "{title}",
-        "on-click": "activate",
-        "on-click-middle": "close",
-        "ignore-list": [
-           "Waybar"
-        ],
-        "app_ids-mapping": {
-            "firefox-developeredition": "firefox-developer-edition"
-        }
-    },
-
-    "hyprland/workspaces": {
+     "hyprland/workspaces": {
         "format": "{icon}",
         "format-icons": {
             "1": "१",
@@ -78,6 +46,7 @@
             "focused": "",
             "default": ""
         }
+        //"visible": false
     },
 
     "custom/cliphist": {
@@ -85,9 +54,9 @@
       "tooltip": true,
       "tooltip-format": "Clipboard History",
       "exec": "echo ' '",
-      "on-click": "cliphist list | walker --dmenu | cliphist decode | wl-copy",
+      "on-click": "~/.config/waybar/scripts/clip-select.sh",
       "on-click-middle": "cliphist wipe",
-      //"on-click-right": "~/.config/waybar/scripts/clip-delete.sh"
+      "on-click-right": "~/.config/waybar/scripts/clip-delete.sh"
     },
 
     "custom/media": {
@@ -100,13 +69,6 @@
       "interval": 2
     },
 
-    "custom/apps": {
-      "exec": "~/.config/waybar/scripts/apps.py",
-      "return-type": "json",
-      "on-click": "~/.config/waybar/scripts/apps.py --popup",
-      "interval": 2
-    },
-
     "tray": {
       "icon-size": 16,
       "spacing": 8,
@@ -114,12 +76,7 @@
       "reverse-direction": true
     },
 
-    "custom/windows": {
-      "exec": "~/.config/waybar/scripts/windows.py",
-      "return-type": "json",
-      "on-click": "~/.config/waybar/scripts/windows.py --popup",
-      "interval": 2
-    },
+
 
     "custom/background-apps": {
       "exec": "~/.config/waybar/scripts/background_apps.py",
@@ -153,14 +110,14 @@
     "custom/network": {
       "exec": "~/.config/waybar/scripts/wifi.py --mode network",
       "return-type": "json",
-      "on-click": "networkmanager_dmenu",
+      "on-click": "networkmanager-dmenu",
       "interval": 5
     },
 
     "custom/bluetooth": {
       "exec": "~/.config/waybar/scripts/wifi.py --mode bluetooth",
       "return-type": "json",
-      "on-click": "networkmanager_dmenu",
+      "on-click": "~/.config/waybar/scripts/wifi.py --popup bluetooth",
       "interval": 5
     },
 
@@ -170,7 +127,6 @@
       "on-click": "~/.config/waybar/scripts/calendar_time.py --toggle",
       "interval": 1
     },
-
     "power-profiles-daemon": {
             "format": "{icon}",
             "tooltip-format": "Profile: {profile}\nDriver: {driver}",
@@ -189,22 +145,21 @@
       "format-plugged": " {capacity}%",
       "format-icons": ["", "", "", "", ""]
     },
-
-    "custom/volume-progress": {
+        "custom/volume-progress": {
       "exec": "/home/stammererone/.config/waybar/scripts/volume_manager.py --listen",
       "return-type": "json",
       "tooltip": false
     },
-
     "custom/capslock": {
       "exec": "/home/stammererone/.config/waybar/scripts/capslock.py",
       "return-type": "json",
       "persistent": true
     },
+    
 
     "custom/power": {
       "format": "",
       "on-click": "wlogout -b 2",
       "tooltip": false
-    }
-}
+    },
+  }
