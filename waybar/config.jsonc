@@ -22,6 +22,7 @@
     "modules-right": [
       "custom/capslock",
       "custom/volume-progress",
+      "network",
       "battery",
       "custom/cliphist",
       "custom/clock",
@@ -47,7 +48,7 @@
     /* --- NEW MODULE: WINDOW ICONS --- */
     "wlr/taskbar": {
         "format": "{icon}",
-	"all-output": true,
+	"all-outputs": true,
         "icon-size": 20,
         "tooltip": true,
         "tooltip-format": "{title}",
@@ -150,6 +151,18 @@
       "interval": 1
     },
 
+    "network": {
+        "interval": 1,
+        // Shows ONLY speed (to avoid duplicating SSID from custom/network)
+        "format": "⬇{bandwidthDownBytes} ⬆{bandwidthUpBytes}",
+        "format-wifi": "⬇{bandwidthDownBytes} ⬆{bandwidthUpBytes}",
+        "format-ethernet": "⬇{bandwidthDownBytes} ⬆{bandwidthUpBytes}",
+        "format-disconnected": "", // Hidden if offline
+        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%) \n⬇ {bandwidthDownBytes}\n⬆ {bandwidthUpBytes}",
+        "tooltip-format-ethernet": "{ifname} 󰈀\n⬇ {bandwidthDownBytes}\n⬆ {bandwidthUpBytes}",
+        "max-length": 50
+    },
     "custom/network": {
       "exec": "~/.config/waybar/scripts/wifi.py --mode network",
       "return-type": "json",

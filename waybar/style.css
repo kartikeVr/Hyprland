@@ -38,6 +38,7 @@ window#waybar {
 #custom-capslock,
 #custom-volume-progress,
 #battery,
+#network,
 #custom-apps,
 #custom-cliphist,
 #custom-clock,
@@ -73,7 +74,7 @@ window#waybar {
 /* --- HOVER STATE (Lift Up) --- */
 #custom-media:hover, #custom-updates:hover, #custom-background-apps:hover,
 #custom-network:hover, #custom-bluetooth:hover, #custom-capslock:hover,
-#custom-volume-progress:hover, #battery:hover, #custom-cliphist:hover,
+#custom-volume-progress:hover, #battery:hover, #custom-cliphist:hover,#network:hover,
 #clock:hover, #power-profiles-daemon:hover, #custom-sys-stats:hover,#custom-apps:hover,
 #custom-power:hover, #taskbar:hover {
     background-color: @color5;
@@ -90,7 +91,7 @@ window#waybar {
 /* --- CLICK STATE (Press Down) --- */
 #custom-media:active, #custom-updates:active, #custom-background-apps:active,
 #custom-network:active, #custom-bluetooth:active, #custom-capslock:active,
-#custom-volume-progress:active, #battery:active, #custom-cliphist:active,
+#custom-volume-progress:active, #battery:active, #custom-cliphist:active,#network:active,
 #clock:active, #power-profiles-daemon:active,#custom-apps:active, #custom-sys-stats:active,
 #custom-power:active, #taskbar:active {
     background-color: @color8;
