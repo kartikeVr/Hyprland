@@ -6,4 +6,5 @@ bluez bluez-utils blueman \
 alsa-firmware alsa-ucm-conf sof-firmware \
 python python-pip python-psutil \
  xdg-desktop-portal-hyprland cloudflare-warp-bin \
-archlinux-xdg-menu
+archlinux-xdg-menu walker-bin elephant-bin elephant-providerlist-bin \
+networkmanager-dmenu-git elephant-bluetooth-bin arp-scan ventoy-bin
