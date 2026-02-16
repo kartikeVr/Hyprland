@@ -1,0 +1,25 @@
+# ~/.config/walker/config.toml
+
+[ui]
+  # Window dimensions
+  width = 600
+  height = 400
+  
+  # Center the window on the monitor
+  anchors = { top = true, bottom = true, left = true, right = true }
+  
+  # Remove window decorations (optional, looks cleaner in Hyprland)
+  window_decorations = true
+
+# Search Bar settings
+[search]
+  placeholder = "Search..."
+  
+# This block connects the UI to the Elephant backend data
+[[list]]
+  name = "applications"
+  placeholder = "Applications"
+  always_show = true
+[[list]]
+  name = "bluetooth"
+  placeholder = "Bluetooth Devices"
