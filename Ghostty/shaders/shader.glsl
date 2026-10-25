@@ -1,40 +1,145 @@
-// based on the following Shader Toy entry
-//
-// [SH17A] Matrix rain. Created by Reinder Nijhoff 2017
-// Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
-// @reindernijhoff
-//
-// https://www.shadertoy.com/view/ldjBW1
-//
+// Based on https://gist.github.com/chardskarth/95874c54e29da6b5a36ab7b50ae2d088
+float ease(float x) {
+    return pow(1.0 - x, 4.0); // Smoother, longer falloff for extended tail persistence
+}
 
-#define SPEED_MULTIPLIER 1.
-#define GREEN_ALPHA .33
+float sdBox(in vec2 p, in vec2 xy, in vec2 b)
+{
+    vec2 d = abs(p - xy) - b;
+    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+}
 
-#define BLACK_BLEND_THRESHOLD .4
+float getSdfRectangle(in vec2 p, in vec2 xy, in vec2 b)
+{
+    vec2 d = abs(p - xy) - b;
+    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+}
 
-#define R fract(1e2 * sin(p.x * 8. + p.y))
+// Based on Inigo Quilez's 2D distance functions article: https://iquilezles.org/articles/distfunctions2d/
+float seg(in vec2 p, in vec2 a, in vec2 b, inout float s, float d) {
+    vec2 e = b - a;
+    vec2 w = p - a;
+    vec2 proj = a + e * clamp(dot(w, e) / dot(e, e), 0.0, 1.0);
+    float segd = dot(p - proj, p - proj);
+    d = min(d, segd);
 
-void mainImage(out vec4 fragColor, vec2 fragCoord) {
-    vec3 v = vec3(fragCoord, 1) / iResolution - .5;
-    // vec3 s = .5 / abs(v);
-    // scale?
-    vec3 s = .9 / abs(v);
-    s.z = min(s.y, s.x);
-    vec3 i = ceil( 8e2 * s.z * ( s.y < s.x ? v.xzz : v.zyz ) ) * .1;
-    vec3 j = fract(i);
-    i -= j;
-    vec3 p = vec3(9, int(iTime * SPEED_MULTIPLIER * (9. + 8. * sin(i).x)), 0) + i;
-    vec3 col = fragColor.rgb;
-    col.g = R / s.z;
-    p *= j;
-    col *= (R >.5 && j.x < .6 && j.y < .8) ? GREEN_ALPHA : 0.;
+    float c0 = step(0.0, p.y - a.y);
+    float c1 = 1.0 - step(0.0, p.y - b.y);
+    float c2 = 1.0 - step(0.0, e.x * w.y - e.y * w.x);
+    float allCond = c0 * c1 * c2;
+    float noneCond = (1.0 - c0) * (1.0 - c1) * (1.0 - c2);
+    float flip = mix(1.0, -1.0, step(0.5, allCond + noneCond));
+    s *= flip;
+    return d;
+}
 
-  	// Sample the terminal screen texture including alpha channel
-    vec2 uv = fragCoord.xy / iResolution.xy;
-  	vec4 terminalColor = texture(iChannel0, uv);
+float getSdfParallelogram(in vec2 p, in vec2 v0, in vec2 v1, in vec2 v2, in vec2 v3) {
+    float s = 1.0;
+    float d = dot(p - v0, p - v0);
 
-    float alpha = step(length(terminalColor.rgb), BLACK_BLEND_THRESHOLD);
-    vec3 blendedColor = mix(terminalColor.rgb * 1.2, col, alpha);
+    d = seg(p, v0, v3, s, d);
+    d = seg(p, v1, v0, s, d);
+    d = seg(p, v2, v1, s, d);
+    d = seg(p, v3, v2, s, d);
 
-    fragColor = vec4(blendedColor, terminalColor.a);
+    return s * sqrt(d);
+}
+
+vec2 normalize(vec2 value, float isPosition) {
+    return (value * 2.0 - (iResolution.xy * isPosition)) / iResolution.y;
+}
+
+float blend(float t)
+{
+    float sqr = t * t;
+    return sqr / (2.0 * (sqr - t) + 1.0);
+}
+
+float antialising(float distance) {
+    return 1. - smoothstep(0., normalize(vec2(2., 2.), 0.).x, distance);
+}
+
+float determineStartVertexFactor(vec2 a, vec2 b) {
+    float condition1 = step(b.x, a.x) * step(a.y, b.y);
+    float condition2 = step(a.x, b.x) * step(b.y, a.y);
+    return 1.0 - max(condition1, condition2);
+}
+
+vec2 getRectangleCenter(vec4 rectangle) {
+    return vec2(rectangle.x + (rectangle.z / 2.), rectangle.y - (rectangle.w / 2.));
+}
+
+const vec4 TRAIL_COLOR = vec4(1.0, 0.725, 0.161, 1.0); // golden yellow blaze
+const vec4 CURRENT_CURSOR_COLOR = TRAIL_COLOR;
+const vec4 PREVIOUS_CURSOR_COLOR = TRAIL_COLOR;
+const vec4 TRAIL_COLOR_ACCENT = vec4(1.0, 0.25, 0.05, 1.0); // vivid red-orange fire accent
+const vec4 GLOW_COLOR = vec4(1.0, 0.45, 0.1, 0.65); // intense radiant halo glow
+const float DURATION = 0.85; // Longer tail persistence (increased from 0.5)
+const float OPACITY = .2;
+const float DRAW_THRESHOLD = 0.5; // Lower threshold to show trail on smaller movements
+const bool HIDE_TRAILS_ON_THE_SAME_LINE = false;
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    #if !defined(WEB)
+    fragColor = texture(iChannel0, fragCoord.xy / iResolution.xy);
+    #endif
+
+    vec2 vu = normalize(fragCoord, 1.);
+    vec2 offsetFactor = vec2(-.5, 0.5);
+
+    vec4 currentCursor = vec4(normalize(iCurrentCursor.xy, 1.), normalize(iCurrentCursor.zw, 0.));
+    vec4 previousCursor = vec4(normalize(iPreviousCursor.xy, 1.), normalize(iPreviousCursor.zw, 0.));
+
+    float vertexFactor = determineStartVertexFactor(currentCursor.xy, previousCursor.xy);
+    float invertedVertexFactor = 1.0 - vertexFactor;
+
+    vec2 v0 = vec2(currentCursor.x + currentCursor.z * vertexFactor, currentCursor.y - currentCursor.w);
+    vec2 v1 = vec2(currentCursor.x + currentCursor.z * invertedVertexFactor, currentCursor.y);
+    vec2 v2 = vec2(previousCursor.x + currentCursor.z * invertedVertexFactor, previousCursor.y);
+    vec2 v3 = vec2(previousCursor.x + currentCursor.z * vertexFactor, previousCursor.y - previousCursor.w);
+
+    vec4 newColor = vec4(fragColor);
+
+    float progress = blend(clamp((iTime - iTimeCursorChange) / DURATION, 0.0, 1.0));
+    float easedProgress = ease(progress);
+
+    vec2 centerCC = getRectangleCenter(currentCursor);
+    vec2 centerCP = getRectangleCenter(previousCursor);
+    float cursorSize = max(currentCursor.z, currentCursor.w);
+    float trailThreshold = DRAW_THRESHOLD * cursorSize;
+    float lineLength = distance(centerCC, centerCP);
+
+    // Calculate cursor SDF for glow and sharp cursor rendering
+    float sdfCursor = getSdfRectangle(vu, currentCursor.xy - (currentCursor.zw * offsetFactor), currentCursor.zw * 0.5);
+    
+    // Radiant cursor halo glow effect
+    float glowDist = max(sdfCursor, 0.0);
+    float cursorGlow = exp(-glowDist * 40.0) * 0.45;
+    newColor = mix(newColor, GLOW_COLOR, cursorGlow);
+
+    bool isFarEnough = lineLength > trailThreshold;
+    bool isOnSeparateLine = HIDE_TRAILS_ON_THE_SAME_LINE ? currentCursor.y != previousCursor.y : true;
+
+    if (isFarEnough && isOnSeparateLine) {
+        float distanceToEnd = distance(vu.xy, centerCC);
+        float alphaModifier = distanceToEnd / (lineLength * (easedProgress));
+
+        if (alphaModifier > 1.0) {
+            alphaModifier = 1.0;
+        }
+
+        float sdfTrail = getSdfParallelogram(vu, v0, v1, v2, v3);
+
+        // Soft trail edge glow radiating outward from the trail shape
+        float trailGlow = exp(-max(sdfTrail, 0.0) * 30.0) * (1.0 - alphaModifier) * 0.35;
+        newColor = mix(newColor, GLOW_COLOR, trailGlow);
+
+        newColor = mix(newColor, TRAIL_COLOR_ACCENT, 1.0 - smoothstep(sdfTrail, -0.01, 0.001));
+        newColor = mix(newColor, TRAIL_COLOR, antialising(sdfTrail));
+        newColor = mix(fragColor, newColor, 1.0 - alphaModifier);
+        fragColor = mix(newColor, fragColor, step(sdfCursor, 0));
+    } else {
+        fragColor = mix(newColor, fragColor, step(sdfCursor, 0));
+    }
 }

@@ -50,31 +50,3 @@ elif [ "$BATTERY_LEVEL" -le $CRITICAL_LEVEL ] && [ "$BATTERY_STATE" == "discharg
   touch $FILE_CRITICAL
 fi
 
-# systemd service
-# Add the following to ~/.config/systemd/user/battery-level.service:
-
-# [Unit]
-# Description=Battery Level Checker
-# After=graphical.target
-#
-# [Service]
-# ExecStart=%h/.config/waybar/scripts/battery-level.sh
-# Type=oneshot
-
-# systemd timer
-# Add the following to ~/.config/systemd/user/battery-level.timer:
-
-# [Unit]
-# Description=Run Battery Level Checker
-#
-# [Timer]
-# OnBootSec=1min
-# OnUnitActiveSec=1min
-# Unit=battery-level.service
-#
-# [Install]
-# WantedBy=timers.target
-
-# enable the timer by running the following commands:
-# systemctl --user daemon-reload
-# systemctl --user enable --now battery-level.timer

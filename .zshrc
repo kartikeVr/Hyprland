@@ -31,6 +31,7 @@ source "$ZSH/oh-my-zsh.sh"
 # ------------------------------------------------------------------------------
 export EDITOR="nvim"
 export VISUAL="nvim"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Wayland & Hyprland specific variables.
 export XDG_SESSION_TYPE=wayland
@@ -266,3 +267,14 @@ remove() {
 # Source your p10k config file. This must be at the end.
 # ------------------------------------------------------------------------------
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export LIBVA_DRIVER_NAME=dummy
+export LIBVA_DRIVER_NAME=iHD
+export CLAUDE_CONFIG_DIR="$HOME/.claude-omniroute"
+
+export ANTHROPIC_BASE_URL="http://localhost:20128"
+
+export ANTHROPIC_AUTH_TOKEN="sk-c4553d4a17d0d0b6-5e375c-e584b902"
+
+export ANTHROPIC_API_KEY=""
+
+export ANTHROPIC_MODEL="Stammererone"

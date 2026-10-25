@@ -1,4 +1,4 @@
-@import url("/home/stammererone/.cache/wal/colors-waybar.css");
+@import url("../../.cache/wal/colors-waybar.css");
 
 /* ==============================================================================
    --- CONFIGURATION ZONE ---
@@ -169,9 +169,19 @@ window#waybar {
     color: @background;           /* Text becomes dark */
     background-color: @color1;    /* Background becomes RED */
     border-color: @color1;        /* Border becomes RED */
-    
+
     /* Optional: Make it blink to show it's unsafe levels */
     animation: blink 1s linear infinite;
+}
+
+/* --- HIDDEN STATE (no volume change detected) --- */
+#custom-volume-progress.hidden {
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
 }
 
 /* Ensure the blink animation exists */

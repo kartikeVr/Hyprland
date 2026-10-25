@@ -23,3 +23,18 @@
 [[list]]
   name = "bluetooth"
   placeholder = "Bluetooth Devices"
+[[list]]
+  name = "clipboard"
+  placeholder = "Clipboard"
+  exec = "cliphist list"
+
+[[action]]
+name = "copy"
+exec = "echo '%s' | cliphist decode | wl-copy --type text/plain"
+
+# Enable walker's built-in clipboard provider
+[providers.clipboard]
+disabled = true
+
+[modules.clipboard]
+disabled = true

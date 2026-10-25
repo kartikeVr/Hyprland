@@ -10,6 +10,7 @@
       "custom/updates",
       "group/expandable-taskbar",
       "tray",
+      "custom/volume-progress",
       "custom/background-apps",
       "custom/network",
       "custom/bluetooth"
@@ -21,7 +22,6 @@
 
     "modules-right": [
       "custom/capslock",
-      "custom/volume-progress",
       "network",
       "battery",
       "custom/cliphist",
@@ -86,7 +86,7 @@
       "tooltip": true,
       "tooltip-format": "Clipboard History",
       "exec": "echo ' '",
-      "on-click": "cliphist list | walker --dmenu | cliphist decode | wl-copy",
+      "on-click": "cliphist list | walker -m clipboard",
       "on-click-middle": "cliphist wipe",
       //"on-click-right": "~/.config/waybar/scripts/clip-delete.sh"
     },
@@ -105,13 +105,14 @@
       "exec": "~/.config/waybar/scripts/apps.py",
       "return-type": "json",
       "on-click": "~/.config/waybar/scripts/apps.py --popup",
+      "on-click-right": "~/.config/waybar/scripts/apps.py --popup",
       "interval": 2
     },
 
     "tray": {
       "icon-size": 16,
       "spacing": 8,
-      "show-passive-items": true,
+      "show-passive-items": false,
       "reverse-direction": true
     },
 
@@ -125,22 +126,23 @@
     "custom/background-apps": {
       "exec": "~/.config/waybar/scripts/background_apps.py",
       "return-type": "json",
-      "on-click": "/home/stammererone/.config/waybar/scripts/background_apps.py --popup",
+      "on-click": "~/.config/waybar/scripts/background_apps.py --popup",
       "interval": 5
     },
 
     "custom/sys-stats": {
       "exec": "~/.config/waybar/scripts/sys_stat.py",
       "return-type": "json",
-      "on-click": "/home/stammererone/.config/waybar/scripts/sys_stat.py --popup",
+      "on-click": "~/.config/waybar/scripts/sys_stat.py --popup",
       "interval": 2
     },
 
     "custom/updates": {
-      "exec": "~/.config/waybar/scripts/system-update.sh",
+      "exec": "~/.config/waybar/sys_update.sh",
       "return-type": "json",
-      "on-click": "kitty --hold ~/.config/waybar/sys_update.sh update",
-      "interval": 1800
+      "on-click": "ghostty -e ~/.config/waybar/sys_update.sh update",
+      "interval": 1800,
+      "tooltip": true
     },
 
     "custom/brightness": {
@@ -166,22 +168,24 @@
     "custom/network": {
       "exec": "~/.config/waybar/scripts/wifi.py --mode network",
       "return-type": "json",
-      "on-click": "networkmanager_dmenu",
+      "on-click": "~/.config/waybar/scripts/wifi-toggle.sh",
       "interval": 5
     },
 
     "custom/bluetooth": {
       "exec": "~/.config/waybar/scripts/wifi.py --mode bluetooth",
       "return-type": "json",
-      "on-click": "networkmanager_dmenu",
+      "on-click": "~/.config/waybar/scripts/bluetooth-toggle.sh",
       "interval": 5
     },
 
     "custom/clock": {
       "exec": "~/.config/waybar/scripts/calendar_time.py",
       "return-type": "json",
+      "format": "{}",
       "on-click": "~/.config/waybar/scripts/calendar_time.py --toggle",
-      "interval": 1
+      "interval": 1,
+      "tooltip": true
     },
 
     "power-profiles-daemon": {
@@ -204,13 +208,17 @@
     },
 
     "custom/volume-progress": {
-      "exec": "/home/stammererone/.config/waybar/scripts/volume_manager.py --listen",
+      "exec": "~/.config/waybar/scripts/volume_manager.py --listen",
       "return-type": "json",
-      "tooltip": false
+      "tooltip": true,
+      "format": "{}",
+      "on-scroll-up": "~/.config/waybar/scripts/volume_manager.py --up",
+      "on-scroll-down": "~/.config/waybar/scripts/volume_manager.py --down",
+      "on-click": "~/.config/waybar/scripts/volume_manager.py --mute"
     },
 
     "custom/capslock": {
-      "exec": "/home/stammererone/.config/waybar/scripts/capslock.py",
+      "exec": "~/.config/waybar/scripts/capslock.py",
       "return-type": "json",
       "persistent": true
     },

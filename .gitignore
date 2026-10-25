@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Editor & OS files
+.DS_Store
+*.swp
+*.swo
+*~
+*.bak
+
+# Temporary / local runtime files
+temp_repo/
+*.log

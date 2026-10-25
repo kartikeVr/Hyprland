@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 STATE_FILE = Path(os.getenv("XDG_RUNTIME_DIR", "/tmp")) / "volume_state.json"
-VISIBILITY_TIMEOUT = 2  # seconds
+VISIBILITY_TIMEOUT = 3  # seconds to show bar after volume change
 
 def get_volume_info():
     """Gets volume and mute status from pactl."""
@@ -52,47 +52,62 @@ def change_volume(action):
 
 def listen():
     """Listens for state changes and prints Waybar JSON."""
+    last_volume = None
+    last_muted = None
+    last_change_time = 0
+
     while True:
-        if STATE_FILE.exists():
-            try:
-                with open(STATE_FILE, "r") as f:
-                    state = json.load(f)
-                
-                last_change_time = state.get("timestamp", 0)
-                
-                if time.time() - last_change_time < VISIBILITY_TIMEOUT:
-                    volume = state.get("volume", 0)
-                    muted = state.get("muted", False)
-                    
-                    if muted:
-                        text = " Muted"
-                        class_name = "muted"
-                    else:
-                        bar_length = 10
-                        # Cap volume at 100 for progress bar drawing
-                        filled_length = int(bar_length * min(volume, 100) / 100)
-                        bar = '█' * filled_length + '─' * (bar_length - filled_length)
-                        text = f"{bar} {volume}%"
-                        
-                        if volume > 100:
-                            class_name = "overdrive"
-                        else:
-                            class_name = "visible"
+        volume, muted = get_volume_info()
+        current_time = time.time()
 
-                    waybar_output = {
-                        "text": text,
-                        "class": class_name,
-                        "tooltip": f"Volume: {volume}%"
-                    }
-                    print(json.dumps(waybar_output), flush=True)
+        # Detect changes
+        if volume != last_volume or muted != last_muted:
+            last_volume = volume
+            last_muted = muted
+            last_change_time = current_time
+
+        # Show bar only within visibility timeout after a change
+        if current_time - last_change_time < VISIBILITY_TIMEOUT:
+            if muted:
+                text = " Muted"
+                class_name = "muted"
+            else:
+                bar_length = 10
+                # Scale bar to 130% max volume
+                filled_length = int(bar_length * min(volume, 130) / 130)
+                bar = '█' * filled_length + '─' * (bar_length - filled_length)
+                text = f"{bar} {volume}%"
+
+                if volume > 100:
+                    class_name = "overdrive"
                 else:
-                    print(json.dumps({}), flush=True)
+                    class_name = "visible"
 
-            except (json.JSONDecodeError, FileNotFoundError):
-                 print(json.dumps({}), flush=True)
+            waybar_output = {
+                "text": text,
+                "class": class_name,
+                "tooltip": f"Volume: {volume}%"
+            }
         else:
-            print(json.dumps({}), flush=True)
+            # Hidden state - output icon but keep class for styling
+            if muted:
+                icon = ""
+            elif volume == 0:
+                icon = "󰝟"
+            elif volume < 33:
+                icon = "󰕿"
+            elif volume < 66:
+                icon = "󰖀"
+            else:
+                icon = "󰕾"
 
+            waybar_output = {
+                "text": icon,
+                "class": "hidden",
+                "tooltip": f"Volume: {volume}%"
+            }
+
+        print(json.dumps(waybar_output), flush=True)
         time.sleep(0.1)
 
 

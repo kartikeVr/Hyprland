@@ -40,7 +40,7 @@ if [ "$1" == "up" ]; then
     printf '\n'
     read -n 1 -p 'Press any key to continue...'
     "
-  kitty --title "  System Update" sh -c "${command}"
+  ghostty -e sh -c "${command}"
 fi
 
 # Check for AUR updates
@@ -66,25 +66,14 @@ fi
 # Calculate total available updates
 total_updates=$((official_updates + aur_updates + flatpak_updates))
 
-echo "Official: $official_updates, AUR: $aur_updates, Flatpak: $flatpak_updates, Total: $total_updates" >> /tmp/waybar-updates.log
+echo "Official: $official_updates, AUR: $aur_updates, Flatpak: $flatpak_updates, Total: $total_updates" > /tmp/waybar-updates.log
 
-echo "Official: $official_updates, AUR: $aur_updates, Flatpak: $flatpak_updates, Total: $total_updates" >> /tmp/waybar-updates.log
-
-# Handle formatting based on AUR helper
-if [ "$aur_helper" == "yay" ]; then
-  [ "${1}" == upgrade ] && printf "Official:  %-10s\nAUR ($aur_helper): %-10s\nFlatpak:   %-10s\n\n" "$official_updates" "$aur_updates" "$flatpak_updates" && exit
-
-  tooltip="Official:  $official_updates\nAUR ($aur_helper): $aur_updates\nFlatpak:   $flatpak_updates"
-
-elif [ "$aur_helper" == "paru" ]; then
-  [ "${1}" == upgrade ] && printf "Official:   %-10s\nAUR ($aur_helper): %-10s\nFlatpak:    %-10s\n\n" "$official_updates" "$aur_updates" "$flatpak_updates" && exit
-
-  tooltip="Official:   $official_updates\nAUR ($aur_helper): $aur_updates\nFlatpak:    $flatpak_updates"
-fi
+# Handle formatting
+tooltip="Official: $official_updates\nAUR: $aur_updates\nFlatpak: $flatpak_updates"
 
 # Module and tooltip
 if [ $total_updates -eq 0 ]; then
-  echo "{\"text\":\"Up to date\", \"tooltip\":\"Packages are up to date\"}"
+  echo "{\"text\":\"✔\", \"tooltip\":\"Packages are up to date\"}"
 else
   echo "{\"text\":\"$total_updates updates\", \"tooltip\":\"${tooltip//\"/\\\"}\"}"
 fi

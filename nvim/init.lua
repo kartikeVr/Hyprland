@@ -48,9 +48,12 @@ require("lazy").setup({
   { "williamboman/mason-lspconfig.nvim" },
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
+  { "hrsh7th/cmp-buffer" }, -- Suggestions from current file
+  { "hrsh7th/cmp-path" },   -- Suggestions for file paths
   { "L3MON4D3/LuaSnip" },
   { "saadparwaiz1/cmp_luasnip" },
   { "hrsh7th/cmp-cmdline" },
+  { "linux-cultist/venv-selector.nvim", dependencies = { "neovim/nvim-lspconfig", "nvim-telescope/telescope.nvim" }, opts = {} },
 
   -- Code outline
   { "stevearc/aerial.nvim" },
@@ -171,21 +174,23 @@ local luasnip = require("luasnip")
 cmp.setup({
   snippet = {
     expand = function(args)
-      luasnip.lsp_expand(args.body)
+      require('luasnip').lsp_expand(args.body)
     end,
   },
   mapping = cmp.mapping.preset.insert({
-    ["<C-Space>"] = cmp.mapping.complete(),
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    ["<Tab>"] = cmp.mapping.select_next_item(),
-    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(), -- Manually trigger suggestions
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept suggestion with Enter
+    ['<Tab>'] = cmp.mapping.select_next_item(),
   }),
   sources = cmp.config.sources({
-    { name = "nvim_lsp" },
-    { name = "luasnip" },
+    { name = 'nvim_lsp' }, -- Most important: suggestions from Pyright
+    { name = 'luasnip' }, 
   }, {
-    { name = "buffer" },
-  }),
+    { name = 'buffer' },
+    { name = 'path' },
+  })
 })
 
 -- cmdline setup
@@ -216,10 +221,22 @@ require("mason-lspconfig").setup {
 local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-for _, server in ipairs({ "pyright", "rust_analyzer", "omnisharp", "html", "cssls" }) do
-  lspconfig[server].setup { capabilities = capabilities }
-end
+-- List of servers you want to configure
+local servers = { "rust_analyzer", "omnisharp", "html", "cssls", "pyright" }
 
+for _, server in ipairs(servers) do
+  -- 1. Load the pre-defined config for the server
+  local cfg = vim.lsp.config[server]
+  
+  -- 2. If the config exists, apply your custom capabilities to it
+  if cfg then
+    cfg.capabilities = capabilities
+    vim.lsp.config(server, cfg)
+  end
+  
+  -- 3. Enable the server
+  vim.lsp.enable(server)
+end
 -----------------------------------------------------
 -- Telescope setup
 -----------------------------------------------------

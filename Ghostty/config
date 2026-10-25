@@ -45,9 +45,8 @@ command = /bin/zsh
 shell-integration = "zsh"
 class = ghostty
 cursor-style=block
-custom-shader=/home/stammererone/ghostty-shader-playground/public/shaders/cursor_blaze_tapered.glsl
-custom-shader = /home/stammererone/ghostty-shaders/cursor_blaze.glsl
-custom-shader=/home/stammererone/.config/ghostty/shaders/shader.glsl
+custom-shader = ~/.config/ghostty/shaders/cursor_blaze.glsl
+custom-shader-animation = true
 shell-integration-features = no-cursor
 mouse-hide-while-typing=true
 

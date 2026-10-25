@@ -12,11 +12,7 @@ START_ART=$(cat <<'EOF'
   ░██████    ░█████░██  ░███████      ░████  ░███████  ░██   ░██   ░██      ░██████   ░██░█████   ░█████░██  ░█████░██     ░████  ░███████     ░██ 
                    ░██                                                                ░██                                                          
              ░███████                                                                 ░██                                                          
-                                                                                                                                                   EOF
-)
-
-# ASCII exit message
-EXIT_ART=$(cat <<'EOF'
+                                                                                                                                                   
 
 
  $$$$$$\    $$                                $$$$$$$\            $$ |$$  |--\
@@ -41,26 +37,25 @@ if [ "$1" = "update" ]; then
     echo "$START_ART"
 
     # Step 1: Rate mirrors
-    echo -e "\n> Rating mirrors (this may take a moment)..."
-    if ! rate-mirrors --save /tmp/mirrors.json arch; then
+    echo -e "\n> Rating mirrors with reflector (this may take a moment)..."
+    if ! sudo reflector --country India --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist; then
       echo "⚠️  Failed to rate mirrors. Continuing anyway..."
     fi
 
     # Step 2: Update system
     echo -e "\n> Starting full system upgrade with pacman..."
     sleep 1
-    sudo pacman -Syyu
+    sudo pacman -Syyu --noconfirm
 
     # Step 3: Show goodbye art
     echo "$EXIT_ART"
+    read -r
     exit 0
 else
-    updates=$(checkupdates 2>/dev/null | wc -l)
+    updates=$( (checkupdates 2>/dev/null || true) | wc -l | xargs)
     if [ "$updates" -gt 0 ]; then
-        echo " $updates"
-        echo "$updates updates available"
+        echo "{\"text\": \" $updates\", \"tooltip\": \"$updates updates available\", \"class\": \"pending\"}"
     else
-        echo "✔"
-        echo "System is up to date"
+        echo "{\"text\": \"✔\", \"tooltip\": \"System is up to date\", \"class\": \"updated\"}"
     fi
 fi

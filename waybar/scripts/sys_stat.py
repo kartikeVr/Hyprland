@@ -65,13 +65,13 @@ def popup():
     Launch external popup script (keeps GUI code out of this lightweight script).
     Adjust path if needed.
     """
-    script = "/home/stammererone/.config/waybar/scripts/webview_plot.py"
+    script = os.path.expanduser("~/.config/waybar/scripts/webview_plot.py")
     if not os.path.isfile(script):
         # fallback: try local in same folder
         script = os.path.join(os.path.dirname(__file__), "webview_plot.py")
     env = os.environ.copy()
     # ensure user's local bin is in PATH
-    env["PATH"] = env.get("PATH", "") + ":/home/stammererone/.local/bin"
+    env["PATH"] = env.get("PATH", "") + ":" + os.path.expanduser("~/.local/bin")
     try:
         # Launch detached so Waybar call doesn't block
         subprocess.Popen([script], env=env)

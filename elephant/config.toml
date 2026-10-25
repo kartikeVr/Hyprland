@@ -11,6 +11,8 @@ debounce = 50
    enable = true
    binary = "elephant-bluetooth" # Ensure you have elephant-bluetooth-bin installed
    icon = "bluetooth"
+  [plugins.clipboard]
+    enable = false
   [plugins.applications]
     enable = true
     # This binary name must match the package you installed (elephant-desktopapplications-bin)
