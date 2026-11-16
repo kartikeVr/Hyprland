@@ -273,8 +273,8 @@ export CLAUDE_CONFIG_DIR="$HOME/.claude-omniroute"
 
 export ANTHROPIC_BASE_URL="http://localhost:20128"
 
-export ANTHROPIC_AUTH_TOKEN="sk-c4553d4a17d0d0b6-5e375c-e584b902"
+export ANTHROPIC_AUTH_TOKEN="YOUR_TOKEN"
 
 export ANTHROPIC_API_KEY=""
 
-export ANTHROPIC_MODEL="Stammererone"
+export ANTHROPIC_MODEL="YOUR_MODEL"
